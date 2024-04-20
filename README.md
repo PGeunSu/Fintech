@@ -67,6 +67,8 @@
 
 <h2>🛠 Troble Shooting</h2>
 
+[go to the trouble shooting section</a>](https://github.com/PGeunSu/Fintech/blob/master/pull_request_template.md)
+
 
 
 
