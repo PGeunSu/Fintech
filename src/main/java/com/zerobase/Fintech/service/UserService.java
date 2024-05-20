@@ -35,25 +35,12 @@ public class UserService {
   }
 
   @Transactional
-  public UserDto UserSignUp(SignUpForm form){
+  public UserDto userSignUp(SignUpForm form){
     //이메일 존재 여부 체크
     if (userRepository.existsByEmail(form.getEmail())){
       throw new AccountException(ALREADY_REGISTER_USER);
     }
     return UserDto.from(signUp(form));
-  }
-
-  @Transactional
-  public JwtDto signIn(String email, String password){
-    //email + password 기반으로 객체 생성
-    UsernamePasswordAuthenticationToken authenticationToken
-        = new UsernamePasswordAuthenticationToken(email, password);
-    //실제 검증
-    Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-    //Jwt 토큰 생성
-    JwtDto jwtDto = jwtTokenProvider.generateToken(authentication);
-
-    return jwtDto;
   }
 
   @Transactional
@@ -70,14 +57,20 @@ public class UserService {
     user.verificationSuccess(true);
   }
 
-//  public Optional<User> findByIdAndEmail(Long id, String email){
-//    return userRepository.findById(id)
-//        .stream().filter(user -> user.getEmail().equals(email)).findFirst();
-//  }
-
   public Optional<User> findValidUser(String email, String password){
     return userRepository.findByEmail(email).stream().filter(
         user -> user.getPassword().equals(password) && user.isVerify()).findFirst();
+  }
+
+  @Transactional
+  public LocalDateTime validateEmail(Long customerId, String verificationCode) {
+    Optional<User> optionalCustomer = userRepository.findById(customerId);
+    if (optionalCustomer.isPresent()) {
+      User u = optionalCustomer.get();
+      u.setVerificationCode(verificationCode, LocalDateTime.now().plusDays(1));
+      return u.getVerifyExpiredAt();
+    }
+    throw new AccountException(USER_NOT_FOUND);
   }
 
 

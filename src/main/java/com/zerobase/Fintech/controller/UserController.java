@@ -1,22 +1,18 @@
 package com.zerobase.Fintech.controller;
 
-import static com.zerobase.Fintech.exception.ErrorCode.USER_NOT_FOUND;
-
 import com.zerobase.Fintech.dto.SignInForm;
 import com.zerobase.Fintech.dto.SignUpForm;
 import com.zerobase.Fintech.dto.UserDto;
 import com.zerobase.Fintech.entity.User;
-import com.zerobase.Fintech.exception.AccountException;
-import com.zerobase.Fintech.exception.ErrorCode;
 import com.zerobase.Fintech.service.LoginService;
 import com.zerobase.Fintech.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +28,12 @@ public class UserController {
   //회원가입
   @PostMapping("/signUp")
   public ResponseEntity<UserDto> signUp(@RequestBody SignUpForm form){
-    return ResponseEntity.ok(userService.UserSignUp(form));
+    String code = getRandomCode();
+    User u = userService.signUp(form);
+
+    userService.validateEmail(u.getId(), code);
+
+    return ResponseEntity.ok(userService.userSignUp(form));
   }
 
   //회원가입 인증
@@ -48,14 +49,10 @@ public class UserController {
     return ResponseEntity.ok(loginService.LoginToken(form));
   }
 
-//  @GetMapping("/getInfo")
-//  public ResponseEntity<UserDto> getInfo(@RequestHeader(name = "X-AUTH-TOKEN") String token){
-//    UserDto u =
-//    User user = userService.findByIdAndEmail(.getId(), .getEmail()).orElseThrow(
-//        () -> new AccountException(USER_NOT_FOUND)
-//    );
-//    return ResponseEntity.ok(UserDto.from(user));
-//  }
+
+  private String getRandomCode() {
+    return RandomStringUtils.random(10, true, true);
+  }
 
 
 

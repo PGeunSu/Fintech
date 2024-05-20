@@ -77,10 +77,6 @@ public class AccountService {
 
   }
 
-
-
-
-
     public void countedAccount(User user){
       if (accountRepository.countByHolder(user.getName()) > 5){
         throw new AccountException(MAX_COUNT_ACCOUNT);

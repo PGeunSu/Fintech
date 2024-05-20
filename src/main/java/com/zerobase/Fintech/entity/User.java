@@ -6,6 +6,7 @@ import com.zerobase.Fintech.dto.SignUpForm;
 import com.zerobase.Fintech.type.Authority;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,8 +31,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 @Entity
+@Builder
+@EntityListeners(value = AuditingEntityListener.class)
 public class User implements UserDetails {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,13 +58,13 @@ public class User implements UserDetails {
   @LastModifiedDate
   private LocalDateTime modifiedAt;
 
-  public void setVerificationCode(String verificationCode, LocalDateTime verifyExpiredAt){
-    this.verificationCode = verificationCode;
-    this.verifyExpiredAt = verifyExpiredAt;
-  }
-
   public void verificationSuccess(boolean verify){
     this.verify = verify;
+  }
+
+  public void setVerificationCode(String verificationCode, LocalDateTime verifyExpiredAt) {
+    this.verificationCode = verificationCode;
+    this.verifyExpiredAt = verifyExpiredAt;
   }
 
   public static User from(SignUpForm form){
@@ -73,6 +76,7 @@ public class User implements UserDetails {
         .verify(false)
         .build();
   }
+
 
 
   @Override

@@ -23,9 +23,13 @@ public enum ErrorCode {
   ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 계좌가 존재하지 않습니다."),
   ALREADY_REGISTER_ACCOUNT(HttpStatus.BAD_REQUEST, "이미 존재하는 계좌입니다."),
   USER_ACCOUNT_UNMATCH(HttpStatus.BAD_REQUEST, "사용자의 아이디와 계좌 소유주가 일치하지 않습니다."),
-  ACCOUNT_HAS_BALANCE(HttpStatus.BAD_REQUEST, "잔액이 있는 계자는 해지할 수 없습니다.");
+  ACCOUNT_HAS_BALANCE(HttpStatus.BAD_REQUEST, "잔액이 있는 계자는 해지할 수 없습니다."),
 
-
+  //Transaction
+  SENT_ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "송금 보내는 계좌를 찾을 수 없습니다."),
+  RECEIVED_ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "송금 받는 계좌를 찾을 수 없습니다."),
+  BALANCE_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "계좌의 잔액이 부족합니다."),
+  TRANSACTION_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "거래 종류를 확인할 수 없습니다.");
 
   private final HttpStatus httpStatus;
   private final String description;
