@@ -4,6 +4,7 @@ import static com.zerobase.Fintech.exception.ErrorCode.ACCOUNT_HAS_BALANCE;
 import static com.zerobase.Fintech.exception.ErrorCode.ACCOUNT_NOT_FOUND;
 import static com.zerobase.Fintech.exception.ErrorCode.MAX_COUNT_ACCOUNT;
 import static com.zerobase.Fintech.exception.ErrorCode.USER_ACCOUNT_UNMATCH;
+import static com.zerobase.Fintech.exception.ErrorCode.USER_NOT_FOUND;
 import static com.zerobase.Fintech.type.AccountStatus.ACTIVE;
 import static com.zerobase.Fintech.type.AccountStatus.INACTIVE;
 
@@ -33,17 +34,22 @@ public class AccountService {
 
 
   @Transactional
-  public AccountDto createAccount(String name, AccountCreateForm form){
-    //사용자 이름과 계좌 소유주 비교
-    if (!name.equals(form.getHolder())){
+  public AccountDto createAccount(String token, AccountCreateForm form){
+    //토큰 사용자와 삭제를 요청한 계좌의 id 비교
+    Long tokenUser = jwtTokenProvider.getId(token);
+    if (!Objects.equals(tokenUser, form.getUserId())){
       throw new AccountException(USER_ACCOUNT_UNMATCH);
     }
-    //소유주가 보유한 계좌가 5개 이상인지 체크
-    countedAccount((User) accountRepository.findByHolder(name));
+//    //소유주가 보유한 계좌가 5개 이상인지 체크
+//    countedAccount((User) accountRepository.findByHolder(name));
+
+    User user = userRepository.findById(tokenUser)
+        .orElseThrow(()-> new AccountException(USER_NOT_FOUND));
 
     return AccountDto.from(
         accountRepository.save(
             Account.builder()
+                .user(user)
                 .accountNumber(form.getAccountNumber())
                 .password(form.getPassword())
                 .holder(form.getHolder())

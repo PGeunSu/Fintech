@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AccountCreateForm {
 
+  private Long userId;
   private String accountNumber;
   private String password;
   private String holder;

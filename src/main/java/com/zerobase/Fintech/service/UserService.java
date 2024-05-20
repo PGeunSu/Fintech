@@ -17,9 +17,6 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,8 +24,6 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
   private final UserRepository userRepository;
-  private final AuthenticationManagerBuilder authenticationManagerBuilder;
-  private final JwtTokenProvider jwtTokenProvider;
 
   public User signUp(SignUpForm form){
     return userRepository.save(User.from(form));

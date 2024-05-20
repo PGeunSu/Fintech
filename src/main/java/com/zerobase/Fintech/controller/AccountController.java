@@ -1,5 +1,7 @@
 package com.zerobase.Fintech.controller;
 
+import static com.zerobase.Fintech.jwt.filter.JwtAuthenticationFilter.TOKEN_PREFIX;
+
 import com.zerobase.Fintech.dto.AccountCreateForm;
 import com.zerobase.Fintech.dto.AccountDeleteForm;
 import com.zerobase.Fintech.dto.AccountDto;
@@ -21,15 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
 
   private final AccountService accountService;
-  private final AccountRepository accountRepository;
 
   @PostMapping("/create")
   private ResponseEntity<AccountDto> createAccount(
+      @RequestHeader(name = "Authorization") String token,
       @RequestBody AccountCreateForm form
   ){
-    String holder = accountRepository.findByHolder(form.getHolder()).toString();
-
-    return ResponseEntity.ok(accountService.createAccount(holder, form));
+    return ResponseEntity.ok(accountService.createAccount(token.substring(TOKEN_PREFIX.length()), form));
   }
 
   @DeleteMapping("/delete")
@@ -39,8 +39,7 @@ public class AccountController {
   ){
     return ResponseEntity.ok(
         accountService.deleteAccount(
-            token.substring(7),form)
-        );
+            token.substring(TOKEN_PREFIX.length()), form));
   }
 
 
