@@ -29,8 +29,7 @@ public class SecurityConfig {
         .httpBasic(AbstractHttpConfigurer::disable)
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests((auth) ->
-        auth.requestMatchers("/users/signIn").permitAll() //해당 API 의 요청 허가
-            .requestMatchers("/users/signUp").permitAll()
+        auth.requestMatchers("/users/**", "/account/**","/transaction/**").permitAll() //해당 API 의 요청 허가
         .anyRequest().authenticated()) //이 밖에 모든 요청은 인증 필요
         .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
         .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

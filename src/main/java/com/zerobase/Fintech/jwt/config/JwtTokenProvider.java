@@ -91,6 +91,11 @@ public class JwtTokenProvider {
 
   }
 
+  //토큰에서 사용자 Id 추출
+  public Long getId(String token){
+    return Long.parseLong(parseClaims(token).getId());
+  }
+
   private Claims parseClaims(String accessToken){
     try{
       return Jwts.parserBuilder()
